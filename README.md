@@ -76,7 +76,7 @@ This project is licensed under the MIT License - see the [https://mit-license.or
 
 ## Acknowledgments
 
-- Special thanks to the open-source community for providing the tools and libraries that make MuseAI possible.
+- Special thanks to the open-source community for providing the tools and libraries that make Renderfy possible.
 
 ---
 
