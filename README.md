@@ -41,7 +41,7 @@ Renderfy is a versatile Software as a Service (SaaS) application built as a tool
 2. Navigate to the project directory:
 
    ```bash
-   cd Renderfy
+   cd /Users/delazeri/Python Projects/Ai-SaaS_Renderfy
    ```
 
 3. Install dependencies:
@@ -72,7 +72,7 @@ We welcome contributions from the community. Feel free to open issues, submit pu
 
 ## License
 
-This project is licensed under the MIT License - see the [https://mit-license.org/](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://mit-license.org/) file for details.
 
 ## Acknowledgments
 
