@@ -109,7 +109,7 @@ const ImagePage = () => {
                                             <Input
                                                 className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                                                 disabled={isLoading}
-                                                placeholder="A colloseum in the style of nordic mythology"
+                                                placeholder="A horse in a field"
                                                 {...field}
                                             />
                                         </FormControl>

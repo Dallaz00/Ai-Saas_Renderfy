@@ -2,13 +2,12 @@
 
 import axios from "axios";
 import * as z from "zod";
-import { Code } from "lucide-react";
+import { Music } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import OpenAI from "openai";
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
 
 import { Heading } from "@/components/heading";
 import { 
@@ -21,9 +20,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
-import { UserAvatar } from "@/components/user-profile";
-import { BotAvatar } from "@/components/bot-avatar";
-import { cn } from "@/lib/utils";
 
 import { formSchema } from "./constants";
 
@@ -32,9 +28,9 @@ type ChatCompletionMessageParam = {
     content: string;
 };
 
-const CodePage = () => {
+const MusicPage = () => {
     const router = useRouter();
-    const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
+    const [music, setMusic] = useState<string>();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -47,18 +43,11 @@ const CodePage = () => {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            const userMessage: ChatCompletionMessageParam = {
-                role: "user",
-                content: values.prompt,
-            };
-            const newMessages = [...messages, userMessage];
+            setMusic(undefined);
 
-            const response = await axios.post("/api/code", {
-                messages: newMessages,
-            });
+            const response = await axios.post("/api/music", values); 
 
-            setMessages((current) => [...current, userMessage, response.data]);
-
+            setMusic(response.data.audio);
             form.reset();
         }   catch (error: any) {
             // TO DO: Open Pro Modal
@@ -71,11 +60,11 @@ const CodePage = () => {
     return (
         <div>
            <Heading 
-               title="Code Generation"
-               description="A simpler way to help you generate working code."
-               icon={Code}
-               iconColor="text-yellow-700"
-               bgColor="bg-yellow-300/10"
+               title="Music Generation"
+               description="Generate music in different genres and styles."
+               icon={Music}
+               iconColor="text-orange-500"
+               bgColor="bg-orange-700/10"
            />
             <div className="px-4 lg:px-8">
                 <div>
@@ -103,14 +92,14 @@ const CodePage = () => {
                                             <Input
                                                 className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                                                 disabled={isLoading}
-                                                placeholder="A fully interactable pygame version of snake."
+                                                placeholder="A guitar solo"
                                                 {...field}
                                             />
                                         </FormControl>
                                     </FormItem>
                                 )}
                             />
-                            <Button className="col-span-12 lg:col-span-2 w-full bg-yellow-400 hover:bg-yellow-700" disabled={isLoading}>
+                            <Button className="col-span-12 lg:col-span-2 w-full bg-orange-500 hover:bg-orange-700" disabled={isLoading}>
                                 Generate
                             </Button>
                         </form>
@@ -122,43 +111,18 @@ const CodePage = () => {
                             <Loader />
                         </div>
                     )}
-                    {messages.length === 0 && !isLoading && (
-                        <Empty label="No conversation started." />
+                    {!music && !isLoading && (
+                        <Empty label="No music generated." />
                     )}
-                    <div className="flex flex-col-reverse gap-y-4">
-                        {messages.map((message) => (
-                            <div 
-                                key={message.content}
-                                className={cn(
-                                    "p-8 w-full flex items-start gap-x-8 rounded-lg",
-                                    message.role === "user" ? "bg-white border border-black/10" : "bg-muted"
-                                )}
-                            >
-                                {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                                <ReactMarkdown
-                                    components={{
-                                        pre: ({ node, ...props }) => (
-                                            <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
-                                                <pre {...props} />
-                                            </div>
-                                        ),
-                                        code: ({ node, ...props }) => (
-                                            <code className="bg-black/10 rounded-lg p-1" {...props} />
-                                        )
-                                    }}
-                                    className={"text-sm overflow-hidden leading-7"}
-                                >
-                                    {message.content || ""}
-                                </ReactMarkdown>
-                            </div> 
-                        ))}
-                    </div>      
+                    {music && (
+                        <audio controls className="w-full mt-8">
+                            <source src={music} /> 
+                        </audio>
+                    )}
                 </div>
             </div>
         </div>
     );
 }
 
-export default CodePage;
-
-//2:18 up ot in video - but mine is not showing the introduction or explanation to accompany the code
+export default MusicPage;

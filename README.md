@@ -62,6 +62,10 @@ Renderfy is a versatile Software as a Service (SaaS) application built as a tool
 
    The application will be accessible at `http://localhost:3000`.
 
+## API DATA
+
+Pulling from OpenAI, Replicate AI
+
 ## Deployment
 
 Ensure to set up deployment configurations based on your hosting provider. Renderfy is compatible with platforms like Vercel, Netlify, and traditional cloud providers.

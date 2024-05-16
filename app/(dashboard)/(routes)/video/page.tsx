@@ -2,11 +2,10 @@
 
 import axios from "axios";
 import * as z from "zod";
-import { MessageSquare } from "lucide-react";
+import { VideoIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import OpenAI from "openai";
 import { useState } from "react";
 
 import { Heading } from "@/components/heading";
@@ -20,20 +19,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
-import { cn } from "@/lib/utils";
-import { UserAvatar } from "@/components/user-profile";
-import { BotAvatar } from "@/components/bot-avatar";
 
 import { formSchema } from "./constants";
 
-type ChatCompletionMessageParam = {
-    role: "user" | "assistant";
-    content: string;
-};
+//type ChatCompletionMessageParam = {
+//    role: "user" | "assistant";
+//    content: string;
+//};
 
-const ConversationPage = () => {
+const VideoPage = () => {
     const router = useRouter();
-    const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
+    const [video, setVideo] = useState<string>();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -46,18 +42,11 @@ const ConversationPage = () => {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            const userMessage: ChatCompletionMessageParam = {
-                role: "user",
-                content: values.prompt,
-            };
-            const newMessages = [...messages, userMessage];
+            setVideo(undefined);
 
-            const response = await axios.post("/api/conversation", {
-                messages: newMessages,
-            });
+            const response = await axios.post("/api/video", values); 
 
-            setMessages((current) => [...current, userMessage, response.data]);
-
+            setVideo(response.data[0]);
             form.reset();
         }   catch (error: any) {
             // TO DO: Open Pro Modal
@@ -70,11 +59,11 @@ const ConversationPage = () => {
     return (
         <div>
            <Heading 
-               title="Conversation"
-               description="Our most innovative conversation model to date"
-               icon={MessageSquare}
-               iconColor="text-violet-500"
-               bgColor="bg-violet-500/10"
+               title="Video Generation"
+               description="Generate videos using prompts."
+               icon={VideoIcon}
+               iconColor="text-emerald-500"
+               bgColor="bg-emerald-700/10"
            />
             <div className="px-4 lg:px-8">
                 <div>
@@ -102,14 +91,14 @@ const ConversationPage = () => {
                                             <Input
                                                 className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                                                 disabled={isLoading}
-                                                placeholder="What is the circumference of the Earth?"
+                                                placeholder="Shark chasing a fish"
                                                 {...field}
                                             />
                                         </FormControl>
                                     </FormItem>
                                 )}
                             />
-                            <Button className="col-span-12 lg:col-span-2 w-full bg-purple-500 hover:bg-purple-700" disabled={isLoading}>
+                            <Button className="col-span-12 lg:col-span-2 w-full bg-emerald-500 hover:bg-emerald-700" disabled={isLoading}>
                                 Generate
                             </Button>
                         </form>
@@ -121,29 +110,19 @@ const ConversationPage = () => {
                             <Loader />
                         </div>
                     )}
-                    {messages.length === 0 && !isLoading && (
-                        <Empty label="No conversation started." />
+                    {!video && !isLoading && (
+                        <Empty label="No video generated." />
                     )}
-                    <div className="flex flex-col-reverse gap-y-4">
-                        {messages.map((message) => (
-                            <div 
-                                key={message.content}
-                                className={cn(
-                                    "p-8 w-full flex items-start gap-x-8 rounded-lg",
-                                    message.role === "user" ? "bg-white border border-black/10" : "bg-muted"
-                                )}
-                            >
-                                {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                                <p className="text-sm">
-                                {message.content}
-                                </p>
-                            </div> 
-                        ))}
-                    </div>      
+                    {video && (
+                        <video className="w-full aspect-video mt-8 rounded-lg border
+                        bg-black" controls>
+                            <source src={video} type="video/mp4" />
+                        </video>
+                    )}
                 </div>
             </div>
         </div>
     );
 }
 
-export default ConversationPage;
+export default VideoPage;
